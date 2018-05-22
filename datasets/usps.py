@@ -13,6 +13,7 @@ import numpy as np
 import torch
 import torch.utils.data as data
 from torchvision import datasets, transforms
+from torch.utils.data.dataset import random_split
 
 import params
 
@@ -31,7 +32,7 @@ class USPS(data.Dataset):
             E.g, ``transforms.RandomCrop``
     """
 
-    url = "https://raw.githubusercontent.com/mingyuliutw/CoGAN_PyTorch/master/data/uspssample/usps_28x28.pkl"
+    url = "https://raw.githubusercontent.com/mingyuliutw/CoGAN/master/cogan_pytorch/data/uspssample/usps_28x28.pkl"
 
     def __init__(self, root, train=True, transform=None, download=False):
         """Init USPS dataset."""
@@ -123,10 +124,15 @@ def get_usps(train):
                                           std=params.dataset_std)])
 
     # dataset and data loader
-    usps_dataset = USPS(root=params.data_root,
+    usps_dataset = USPS(root=os.path.join(params.dataset_root,'usps'),
                         train=train,
                         transform=pre_process,
                         download=True)
+
+    # sample 1800 in USPS
+
+    if train:
+        usps_dataset, usps_dataset_5k =  random_split(usps_dataset,[1800, usps_dataset.__len__()-1800])
 
     usps_data_loader = torch.utils.data.DataLoader(
         dataset=usps_dataset,
