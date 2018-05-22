@@ -3,6 +3,7 @@
 
 import torch
 from torchvision import datasets, transforms
+from torch.utils.data.dataset import random_split
 
 import params
 
@@ -20,6 +21,10 @@ def get_mnist(train):
                                    train=train,
                                    transform=pre_process,
                                    download=True)
+
+    # sample 2000 in MNIST
+    #if train:
+    #    mnist_dataset, mnist_dataset_48k =  random_split(mnist_dataset,[2000, mnist_dataset.__len__()-2000])
 
     mnist_data_loader = torch.utils.data.DataLoader(
         dataset=mnist_dataset,
