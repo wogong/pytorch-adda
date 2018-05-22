@@ -89,9 +89,8 @@ def eval_src(encoder, classifier, data_loader):
         images = make_variable(images, volatile=True)
         labels = make_variable(labels)
         #labels = labels.squeeze(1)
-        preds = classifier(encoder(images))
 
-        criterion(preds, labels)
+        preds = classifier(encoder(images))
 
         loss += criterion(preds, labels).data[0]
 
