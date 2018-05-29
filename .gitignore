@@ -1,6 +1,5 @@
 # pytorch dataset
-data
-snapshots
+_gsdata_
 
 # trash
 .DS_Store

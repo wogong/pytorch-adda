@@ -1,17 +1,11 @@
 # PyTorch-ADDA
+
 A PyTorch implementation for [Adversarial Discriminative Domain Adaptation](https://arxiv.org/abs/1702.05464).
 
 ## Environment
+
 - Python 3.6
-- PyTorch 0.2.0
-
-## Usage
-
-I only test on MNIST -> USPS, you can just run the following command:
-
-```shell
-python3 main.py
-```
+- PyTorch 0.3.1post2
 
 ## Network
 
@@ -59,9 +53,9 @@ In this experiment, I use three types of network. They are very simple.
 
 ## Result
 
-|                                    | MNIST (Source) | USPS (Target) |
-| :--------------------------------: | :------------: | :-----------: |
-| Source Encoder + Source Classifier |   99.140000%   |  83.978495%   |
-| Target Encoder + Source Classifier |                |  97.634409%   |
-
-Domain Adaptation does work (97% vs 83%).
+|                       | MNIST-USPS     | MNIST-USPS | SVHN-MNIST |
+| :-------------------: | :------------: | :--------: | :--------: |
+| ADDA: Source Only     |   0.7520       |  0.5710    |  0.6010    |
+| ADDA                  |   0.8940       |  0.9010    |  0.7600    |
+| This Repo: Source Only|   0.8617       |  0.    |  0.    |
+| This Repo             |   0.9100       |  0.    |  0.    |
