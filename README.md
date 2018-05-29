@@ -53,9 +53,9 @@ In this experiment, I use three types of network. They are very simple.
 
 ## Result
 
-|                       | MNIST-USPS     | MNIST-USPS | SVHN-MNIST |
+|                       | MNIST-USPS     | USPS-MNIST | SVHN-MNIST |
 | :-------------------: | :------------: | :--------: | :--------: |
 | ADDA: Source Only     |   0.7520       |  0.5710    |  0.6010    |
 | ADDA                  |   0.8940       |  0.9010    |  0.7600    |
-| This Repo: Source Only|   0.8617       |  0.    |  0.    |
-| This Repo             |   0.9100       |  0.    |  0.    |
+| This Repo: Source Only|   0.8617       |  0.6305    |  0.    |
+| This Repo             |   0.9100       |  0.8815    |  0.    |
