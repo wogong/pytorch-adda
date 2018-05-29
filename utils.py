@@ -7,9 +7,10 @@ import torch
 import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 
-import params
-from datasets import get_mnist, get_usps, get_svhn
-
+from datasets import get_mnist, get_mnistm, get_svhn
+from datasets.office import get_office
+from datasets.officecaltech import get_officecaltech
+from datasets.usps import get_usps
 
 def make_variable(tensor, volatile=False):
     """Convert Tensor to Variable."""
@@ -55,26 +56,35 @@ def init_random_seed(manual_seed):
         torch.cuda.manual_seed_all(seed)
 
 
-def get_data_loader(name, train=True):
+def get_data_loader(name, dataset_root, batch_size, train=True):
     """Get data loader by name."""
-    if name == "MNIST":
-        return get_mnist(train)
-    elif name == "USPS":
-        return get_usps(train)
-    elif name == "SVHN":
-        return get_svhn(train)
-
+    if name == "mnist":
+        return get_mnist(dataset_root, batch_size, train)
+    elif name == "mnistm":
+        return get_mnistm(dataset_root, batch_size, train)
+    elif name == "usps":
+        return get_usps(dataset_root, batch_size, train)
+    elif name == "svhn":
+        return get_svhn(dataset_root, batch_size, train)
+    elif name == "amazon31":
+        return get_office(dataset_root, batch_size, 'amazon')
+    elif name == "webcam31":
+        return get_office(dataset_root, batch_size, 'webcam')
+    elif name == "webcam10":
+        return get_officecaltech(dataset_root, batch_size, 'webcam')
 
 def init_model(net, restore):
     """Init models with cuda and weights."""
     # init weights of model
-    net.apply(init_weights)
+    # net.apply(init_weights)
 
     # restore model weights
     if restore is not None and os.path.exists(restore):
         net.load_state_dict(torch.load(restore))
         net.restored = True
         print("Restore model from: {}".format(os.path.abspath(restore)))
+    else:
+        print("No trained model, train from scratch.")
 
     # check if cuda is available
     if torch.cuda.is_available():
@@ -83,12 +93,10 @@ def init_model(net, restore):
 
     return net
 
-
-def save_model(net, filename):
+def save_model(net, model_root, filename):
     """Save trained model."""
-    if not os.path.exists(params.model_root):
-        os.makedirs(params.model_root)
+    if not os.path.exists(model_root):
+        os.makedirs(model_root)
     torch.save(net.state_dict(),
-               os.path.join(params.model_root, filename))
-    print("save pretrained model to: {}".format(os.path.join(params.model_root,
-                                                             filename)))
+               os.path.join(model_root, filename))
+    print("save pretrained model to: {}".format(os.path.join(model_root, filename)))

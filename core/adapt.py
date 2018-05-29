@@ -6,12 +6,10 @@ import torch
 import torch.optim as optim
 from torch import nn
 
-import params
 from utils import make_variable
+from core.test import eval_tgt
 
-
-def train_tgt(src_encoder, tgt_encoder, critic,
-              src_data_loader, tgt_data_loader):
+def train_tgt(src_encoder, src_classifier, tgt_encoder, critic, src_data_loader, tgt_data_loader, params):
     """Train encoder for target domain."""
     ####################
     # 1. setup network #
@@ -112,20 +110,29 @@ def train_tgt(src_encoder, tgt_encoder, critic,
                               acc.data[0]))
 
         #############################
-        # 2.4 save model parameters #
+        # 2.4 eval training model #
+        #############################
+        if ((epoch + 1) % params.eval_step == 0):
+            print ("eval model on source data")
+            eval_tgt(tgt_encoder, src_classifier, src_data_loader)
+            print ("eval model on target data")
+            eval_tgt(tgt_encoder, src_classifier, tgt_data_loader)
+
+        #############################
+        # 2.5 save model parameters #
         #############################
         if ((epoch + 1) % params.save_step == 0):
             torch.save(critic.state_dict(), os.path.join(
                 params.model_root,
-                "ADDA-critic-{}.pt".format(epoch + 1)))
+                "{}-{}-critic-{}.pt".format(params.src_dataset, params.tgt_dataset, epoch + 1)))
             torch.save(tgt_encoder.state_dict(), os.path.join(
                 params.model_root,
-                "ADDA-target-encoder-{}.pt".format(epoch + 1)))
+                "{}-{}-target-encoder-{}.pt".format(params.src_dataset, params.tgt_dataset, epoch + 1)))
 
     torch.save(critic.state_dict(), os.path.join(
         params.model_root,
-        "ADDA-critic-final.pt"))
+        "{}-{}-critic-final.pt".format(params.src_dataset, params.tgt_dataset)))
     torch.save(tgt_encoder.state_dict(), os.path.join(
         params.model_root,
-        "ADDA-target-encoder-final.pt"))
+        "{}-{}-target-encoder-final.pt".format(params.src_dataset, params.tgt_dataset)))
     return tgt_encoder

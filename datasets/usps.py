@@ -15,8 +15,6 @@ import torch.utils.data as data
 from torchvision import datasets, transforms
 from torch.utils.data.dataset import random_split
 
-import params
-
 
 class USPS(data.Dataset):
     """USPS Dataset.
@@ -73,8 +71,7 @@ class USPS(data.Dataset):
         img, label = self.train_data[index, ::], self.train_labels[index]
         if self.transform is not None:
             img = self.transform(img)
-        label = torch.LongTensor([np.int64(label).item()])
-        # label = torch.FloatTensor([label.item()])
+        label = int(label)
         return img, label
 
     def __len__(self):
@@ -115,28 +112,28 @@ class USPS(data.Dataset):
         return images, labels
 
 
-def get_usps(train):
+def get_usps(dataset_root, batch_size, train):
     """Get USPS dataset loader."""
     # image pre-processing
     pre_process = transforms.Compose([transforms.ToTensor(),
                                       transforms.Normalize(
-                                          mean=params.dataset_mean,
-                                          std=params.dataset_std)])
+                                          mean=(0.5, 0.5, 0.5),
+                                          std=(0.5, 0.5, 0.5))])
 
     # dataset and data loader
-    usps_dataset = USPS(root=os.path.join(params.dataset_root,'usps'),
+    usps_dataset = USPS(root=os.path.join(dataset_root, 'usps'),
                         train=train,
                         transform=pre_process,
-                        download=True)
+                        download=False)
 
     # sample 1800 in USPS
-
     if train:
         usps_dataset, usps_dataset_5k =  random_split(usps_dataset,[1800, usps_dataset.__len__()-1800])
 
     usps_data_loader = torch.utils.data.DataLoader(
         dataset=usps_dataset,
-        batch_size=params.batch_size,
-        shuffle=True)
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=8)
 
     return usps_data_loader

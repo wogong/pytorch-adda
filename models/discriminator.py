@@ -6,19 +6,18 @@ from torch import nn
 class Discriminator(nn.Module):
     """Discriminator model for source domain."""
 
-    def __init__(self, input_dims, hidden_dims, output_dims):
+    def __init__(self):
         """Init discriminator."""
         super(Discriminator, self).__init__()
 
         self.restored = False
 
         self.layer = nn.Sequential(
-            nn.Linear(input_dims, hidden_dims),
+            nn.Linear(500, 500),
             nn.ReLU(),
-            nn.Linear(hidden_dims, hidden_dims),
+            nn.Linear(500, 500),
             nn.ReLU(),
-            nn.Linear(hidden_dims, output_dims),
-            nn.LogSoftmax()
+            nn.Linear(500, 2),
         )
 
     def forward(self, input):

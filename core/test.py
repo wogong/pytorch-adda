@@ -1,6 +1,5 @@
 """Test script to classify target data."""
 
-import torch
 import torch.nn as nn
 
 from utils import make_variable

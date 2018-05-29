@@ -1,9 +1,61 @@
 """Main script for ADDA."""
 
-import params
+import os
 from core import eval_src, eval_tgt, train_src, train_tgt
 from models import Discriminator, LeNetClassifier, LeNetEncoder
 from utils import get_data_loader, init_model, init_random_seed
+
+
+class Config(object):
+    # params for dataset and data loader
+    home = os.path.expanduser("~/")
+    data_root = home + "Dataset"
+
+    dataset_rootm = os.path.expanduser(os.path.join('~', 'Datasets'))
+    model_root = os.path.expanduser(os.path.join('~', 'Models', 'pytorch-DANN'))
+
+    dataset_mean_value = 0.5
+    dataset_std_value = 0.5
+    dataset_mean = (dataset_mean_value, dataset_mean_value, dataset_mean_value)
+    dataset_std = (dataset_std_value, dataset_std_value, dataset_std_value)
+    batch_size = 128
+    # image_size = 64
+
+    # params for source dataset
+    src_dataset = "MNIST"
+    src_encoder_restore = home + "snapshots/ADDA-source-encoder-final.pt"
+    src_classifier_restore = home + "snapshots/ADDA-source-classifier-final.pt"
+    src_model_trained = True
+
+    # params for target dataset
+    tgt_dataset = "USPS"
+    tgt_encoder_restore = home + "snapshots/ADDA-target-encoder-final.pt"
+    tgt_model_trained = True
+
+    # params for setting up models
+    model_root = home + "snapshots"
+    d_model_restore = home + "snapshots/ADDA-critic-final.pt"
+
+    # params for training network
+    num_gpu = 2
+
+    num_epochs_pre = 100
+    log_step_pre = 20
+    eval_step_pre = 20
+    save_step_pre = 100
+
+    num_epochs = 100
+    log_step = 10
+    save_step = 100
+    manual_seed = None
+
+    # params for optimizing models
+    d_learning_rate = 2e-4
+    c_learning_rate = 2e-4
+    beta1 = 0.5
+    beta2 = 0.999
+
+params = Config()
 
 if __name__ == '__main__':
     # init random seed

@@ -3,11 +3,10 @@
 import torch.nn as nn
 import torch.optim as optim
 
-import params
 from utils import make_variable, save_model
 
 
-def train_src(encoder, classifier, data_loader):
+def train_src(encoder, classifier, data_loader, params):
     """Train classifier for source domain."""
     ####################
     # 1. setup network #
@@ -60,13 +59,12 @@ def train_src(encoder, classifier, data_loader):
 
         # save model parameters
         if ((epoch + 1) % params.save_step_pre == 0):
-            save_model(encoder, "ADDA-source-encoder-{}.pt".format(epoch + 1))
-            save_model(
-                classifier, "ADDA-source-classifier-{}.pt".format(epoch + 1))
+            save_model(encoder, params.model_root, "{}-source-encoder-{}.pt".format(params.src_dataset, epoch + 1))
+            save_model(classifier, params.model_root, "{}-source-classifier-{}.pt".format(params.src_dataset, epoch + 1))
 
     # # save final model
-    save_model(encoder, "ADDA-source-encoder-final.pt")
-    save_model(classifier, "ADDA-source-classifier-final.pt")
+    save_model(encoder, params.model_root, params.src_dataset+"-source-encoder-final.pt")
+    save_model(classifier, params.model_root, params.src_dataset+"-source-classifier-final.pt")
 
     return encoder, classifier
 
