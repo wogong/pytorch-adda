@@ -44,8 +44,8 @@ class Config(object):
     manual_seed = None
 
     # params for optimizing models
-    d_learning_rate = 2e-4
-    c_learning_rate = 2e-4
+    tgt_learning_rate = 5e-4
+    critic_learning_rate = 2e-4
     beta1 = 0.5
     beta2 = 0.999
 
