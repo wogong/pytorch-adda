@@ -22,8 +22,8 @@ def get_mnist(dataset_root, batch_size, train):
                                    download=False)
 
     # sample 2000 in MNIST
-    if train:
-        mnist_dataset, mnist_dataset_5k =  random_split(mnist_dataset,[2000, mnist_dataset.__len__()-2000])
+    #if train:
+    #    mnist_dataset, mnist_dataset_5k =  random_split(mnist_dataset,[2000, mnist_dataset.__len__()-2000])
 
     mnist_data_loader = torch.utils.data.DataLoader(
         dataset=mnist_dataset,

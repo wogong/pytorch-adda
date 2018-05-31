@@ -8,7 +8,8 @@ import os
 def get_svhn(dataset_root, batch_size, train):
     """Get SVHN datasets loader."""
     # image pre-processing
-    pre_process = transforms.Compose([transforms.Resize(28),
+    pre_process = transforms.Compose([transforms.Grayscale(),
+                                      transforms.Resize(28),
                                       transforms.ToTensor(),
                                       transforms.Normalize(
                                           mean=(0.5, 0.5, 0.5),

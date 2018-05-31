@@ -15,18 +15,18 @@ def train_tgt(src_encoder, src_classifier, tgt_encoder, critic, src_data_loader,
     # 1. setup network #
     ####################
 
-    # set train state for Dropout and BN layers
-    tgt_encoder.train()
-    critic.train()
+
 
     # setup criterion and optimizer
     criterion = nn.CrossEntropyLoss()
     optimizer_tgt = optim.Adam(tgt_encoder.parameters(),
-                               lr=params.c_learning_rate,
-                               betas=(params.beta1, params.beta2))
+                               lr=params.tgt_learning_rate,
+                               betas=(params.beta1, params.beta2),
+                               weight_decay=2.5e-5)
     optimizer_critic = optim.Adam(critic.parameters(),
-                                  lr=params.d_learning_rate,
-                                  betas=(params.beta1, params.beta2))
+                                  lr=params.critic_learning_rate,
+                                  betas=(params.beta1, params.beta2),
+                                  weight_decay=2.5e-5)
     len_data_loader = min(len(src_data_loader), len(tgt_data_loader))
 
     ####################
@@ -34,6 +34,11 @@ def train_tgt(src_encoder, src_classifier, tgt_encoder, critic, src_data_loader,
     ####################
 
     for epoch in range(params.num_epochs):
+
+        # set train state for Dropout and BN layers
+        tgt_encoder.train()
+        critic.train()
+
         # zip source and target data pair
         data_zip = enumerate(zip(src_data_loader, tgt_data_loader))
         for step, ((images_src, _), (images_tgt, _)) in data_zip:
@@ -54,22 +59,23 @@ def train_tgt(src_encoder, src_classifier, tgt_encoder, critic, src_data_loader,
             feat_concat = torch.cat((feat_src, feat_tgt), 0)
 
             # predict on discriminator
-            pred_concat = critic(feat_concat.detach())
+            pred_src = critic(feat_src.detach())
+            pred_tgt = critic(feat_tgt.detach())
 
             # prepare real and fake label
             label_src = make_variable(torch.ones(feat_src.size(0)).long())
             label_tgt = make_variable(torch.zeros(feat_tgt.size(0)).long())
-            label_concat = torch.cat((label_src, label_tgt), 0)
 
             # compute loss for critic
-            loss_critic = criterion(pred_concat, label_concat)
+            loss_critic = criterion(pred_src, label_src) + criterion(pred_tgt, label_tgt)
             loss_critic.backward()
 
             # optimize critic
             optimizer_critic.step()
 
-            pred_cls = torch.squeeze(pred_concat.max(1)[1])
-            acc = (pred_cls == label_concat).float().mean()
+            pred_cls_src = torch.squeeze(pred_src.max(1)[1])
+            pred_cls_tgt = torch.squeeze(pred_tgt.max(1)[1])
+            acc = ((pred_cls_src == label_src).float().mean() + (pred_cls_tgt == label_tgt).float().mean()) / 2
 
             ############################
             # 2.2 train target encoder #
@@ -99,8 +105,8 @@ def train_tgt(src_encoder, src_classifier, tgt_encoder, critic, src_data_loader,
             # 2.3 print step info #
             #######################
             if ((step + 1) % params.log_step == 0):
-                print("Epoch [{}/{}] Step [{}/{}]:"
-                      "d_loss={:.5f} g_loss={:.5f} acc={:.5f}"
+                print("Epoch [{:3d}/{:3d}] Step [{:3d}/{:3d}]:"
+                      "critic_loss={:.5f} tgt_loss={:.5f} acc={:.5f}"
                       .format(epoch + 1,
                               params.num_epochs,
                               step + 1,

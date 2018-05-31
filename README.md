@@ -57,5 +57,8 @@ In this experiment, I use three types of network. They are very simple.
 | :-------------------: | :------------: | :--------: | :--------: |
 | ADDA: Source Only     |   0.7520       |  0.5710    |  0.6010    |
 | ADDA                  |   0.8940       |  0.9010    |  0.7600    |
-| This Repo: Source Only|   0.8617       |  0.6305    |  0.    |
+| This Repo: Source Only|   0.8617       |  0.6305    |  0.6326    |
 | This Repo             |   0.9100       |  0.8815    |  0.    |
+
+1. mnist-usps 实验使用的是部分的样本（2000/1800），注意修改代码。
+2. svhn-mnist 重现暂时遇到了困难，tgt_loss 无法控制

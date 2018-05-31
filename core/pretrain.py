@@ -12,14 +12,10 @@ def train_src(encoder, classifier, data_loader, params):
     # 1. setup network #
     ####################
 
-    # set train state for Dropout and BN layers
-    encoder.train()
-    classifier.train()
-
     # setup criterion and optimizer
     optimizer = optim.Adam(
         list(encoder.parameters()) + list(classifier.parameters()),
-        lr=params.c_learning_rate,
+        lr=params.pre_learning_rate,
         betas=(params.beta1, params.beta2))
     criterion = nn.CrossEntropyLoss()
 
@@ -28,6 +24,10 @@ def train_src(encoder, classifier, data_loader, params):
     ####################
 
     for epoch in range(params.num_epochs_pre):
+        # set train state for Dropout and BN layers
+        encoder.train()
+        classifier.train()
+
         for step, (images, labels) in enumerate(data_loader):
             # make images and labels variable
             images = make_variable(images)
