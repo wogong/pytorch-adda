@@ -5,7 +5,7 @@ import torch.nn as nn
 from utils import make_variable
 
 
-def eval_tgt(encoder, classifier, data_loader):
+def eval(encoder, classifier, data_loader):
     """Evaluation for target encoder by source classifier on target dataset."""
     # set eval state for Dropout and BN layers
     encoder.eval()

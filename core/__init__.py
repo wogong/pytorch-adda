@@ -1,5 +1,5 @@
 from .adapt import train_tgt
-from .pretrain import eval_src, train_src
-from .test import eval_tgt
+from .pretrain import train_src
+from .test import eval
 
-__all__ = (eval_src, train_src, train_tgt, eval_tgt)
+__all__ = (eval, train_src, train_tgt)

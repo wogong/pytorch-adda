@@ -7,15 +7,13 @@ import torch.optim as optim
 from torch import nn
 
 from utils import make_variable
-from core.test import eval_tgt
+from core.test import eval
 
 def train_tgt(src_encoder, src_classifier, tgt_encoder, critic, src_data_loader, tgt_data_loader, params):
     """Train encoder for target domain."""
     ####################
     # 1. setup network #
     ####################
-
-
 
     # setup criterion and optimizer
     criterion = nn.CrossEntropyLoss()
@@ -120,9 +118,9 @@ def train_tgt(src_encoder, src_classifier, tgt_encoder, critic, src_data_loader,
         #############################
         if ((epoch + 1) % params.eval_step == 0):
             print ("eval model on source data")
-            eval_tgt(tgt_encoder, src_classifier, src_data_loader)
+            eval(tgt_encoder, src_classifier, src_data_loader)
             print ("eval model on target data")
-            eval_tgt(tgt_encoder, src_classifier, tgt_data_loader)
+            eval(tgt_encoder, src_classifier, tgt_data_loader)
 
         #############################
         # 2.5 save model parameters #

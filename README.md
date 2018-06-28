@@ -53,12 +53,19 @@ In this experiment, I use three types of network. They are very simple.
 
 ## Result
 
-|                       | MNIST-USPS     | USPS-MNIST | SVHN-MNIST |
-| :-------------------: | :------------: | :--------: | :--------: |
-| ADDA: Source Only     |   0.7520       |  0.5710    |  0.6010    |
-| ADDA                  |   0.8940       |  0.9010    |  0.7600    |
-| This Repo: Source Only|   0.8617       |  0.6305    |  0.6326    |
-| This Repo             |   0.9100       |  0.8815    |  0.    |
+|                       | MNIST-USPS     | USPS-MNIST | SVHN-MNIST |SVHN-MNIST(BN) |AMAZON-WEBCAM |
+| :-------------------: | :------------: | :--------: | :--------: |:------------: |:--------: |
+| ADDA: Source Only     |   0.7520       |  0.5710    |  0.6010    | 0.6010        | 0.6260    |
+| ADDA                  |   0.8940       |  0.9010    |  0.7600    | 0.7600        | 0.7510    |
+| This Repo: Source Only|   0.8617       |  0.6305    |  0.6326    | 0.6414        | -    |
+| This Repo             |   0.9100       |  0.8815    |not converge| 0.8188        | -    |
 
-1. mnist-usps 实验使用的是部分的样本（2000/1800），注意修改代码。
-2. svhn-mnist 重现暂时遇到了困难，tgt_loss 无法控制
+1. mnist-usps 实验使用的是部分的样本（2000/1800），注意修改代码。实验设置参考文献 \cite{long2013transfer}. sampling 2000 images from MNIST and 1800 from USPS
+2. svhn-mnist 重现，不使用 BN 无法收敛，同样的结论来自<https://github.com/aabbas90/ADDA-PyTorch>
+
+## Other implementations
+
+- authors(tensorflow) <https://github.com/erictzeng/adda>
+- pytorch <https://github.com/corenel/pytorch-adda>
+- pytorch forks <https://github.com/Zzlongjuanfeng/pytorch-adda>
+- pytorch <https://github.com/aabbas90/ADDA-PyTorch>

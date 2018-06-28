@@ -4,9 +4,9 @@ import torch.nn as nn
 import torch.optim as optim
 
 from utils import make_variable, save_model
+from .test import eval
 
-
-def train_src(encoder, classifier, data_loader, params):
+def train_src(encoder, classifier, src_data_loader, tgt_data_loader, params):
     """Train classifier for source domain."""
     ####################
     # 1. setup network #
@@ -28,7 +28,7 @@ def train_src(encoder, classifier, data_loader, params):
         encoder.train()
         classifier.train()
 
-        for step, (images, labels) in enumerate(data_loader):
+        for step, (images, labels) in enumerate(src_data_loader):
             # make images and labels variable
             images = make_variable(images)
             labels = make_variable(labels.squeeze_())
@@ -50,12 +50,15 @@ def train_src(encoder, classifier, data_loader, params):
                       .format(epoch + 1,
                               params.num_epochs_pre,
                               step + 1,
-                              len(data_loader),
+                              len(src_data_loader),
                               loss.data[0]))
 
         # eval model on test set
         if ((epoch + 1) % params.eval_step_pre == 0):
-            eval_src(encoder, classifier, data_loader)
+            print ("eval model on source dataset")
+            eval(encoder, classifier, src_data_loader)
+            print ("eval model on target dataset")
+            eval(encoder, classifier, tgt_data_loader)
 
         # save model parameters
         if ((epoch + 1) % params.save_step_pre == 0):
@@ -67,35 +70,3 @@ def train_src(encoder, classifier, data_loader, params):
     save_model(classifier, params.model_root, params.src_dataset+"-source-classifier-final.pt")
 
     return encoder, classifier
-
-
-def eval_src(encoder, classifier, data_loader):
-    """Evaluate classifier for source domain."""
-    # set eval state for Dropout and BN layers
-    encoder.eval()
-    classifier.eval()
-
-    # init loss and accuracy
-    loss = 0
-    acc = 0
-
-    # set loss function
-    criterion = nn.CrossEntropyLoss()
-
-    # evaluate network
-    for (images, labels) in data_loader:
-        images = make_variable(images, volatile=True)
-        labels = make_variable(labels)
-        #labels = labels.squeeze(1)
-
-        preds = classifier(encoder(images))
-
-        loss += criterion(preds, labels).data[0]
-
-        pred_cls = preds.data.max(1)[1]
-        acc += pred_cls.eq(labels.data).cpu().sum()
-
-    loss /= len(data_loader)
-    acc /= len(data_loader.dataset)
-
-    print("Avg Loss = {}, Avg Accuracy = {:2%}".format(loss, acc))

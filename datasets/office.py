@@ -9,7 +9,7 @@ import os
 def get_office(dataset_root, batch_size, category):
     """Get Office datasets loader."""
     # image pre-processing
-    pre_process = transforms.Compose([transforms.Resize(227),
+    pre_process = transforms.Compose([transforms.Resize(224),
                                      transforms.ToTensor(),
                                      transforms.Normalize(
                                          mean=(0.485, 0.456, 0.406),
@@ -25,6 +25,7 @@ def get_office(dataset_root, batch_size, category):
         dataset=office_dataset,
         batch_size=batch_size,
         shuffle=True,
+        drop_last=True,
         num_workers=4)
 
     return office_dataloader
